@@ -1,0 +1,12 @@
+<div>
+  <h1 class="text-xl font-bold mb-5">Register</h1>
+
+  <div>
+    <app-register-form (registerSubmit)="onRegisterSubmit($event)" />
+
+    <p class="mt-4">
+      Already have an account?
+      <a routerLink="/login" class="font-bold underline">Login</a>
+    </p>
+  </div>
+</div>

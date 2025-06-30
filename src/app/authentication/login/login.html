@@ -1,0 +1,12 @@
+<div>
+  <h1 class="text-xl font-bold mb-5">Login</h1>
+
+  <div>
+    <app-login-form (loginSubmit)="onLoginSubmit($event)" />
+
+    <p class="mt-4">
+      Don't have an account?
+      <a routerLink="/register" class="font-bold underline">Register</a>
+    </p>
+  </div>
+</div>

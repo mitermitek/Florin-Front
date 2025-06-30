@@ -1,3 +1,19 @@
-<div class="container mx-auto px-4 py-8 max-w-2xl">
+<nav>
+  <div
+    class="container flex justify-between items-center mx-auto px-4 py-2 max-w-2xl"
+  >
+    <div>
+      <a routerLink="/" class="text-2xl font-bold">Florin</a>
+    </div>
+
+    @if (displayMenu()) {
+    <div>
+      <a routerLink="/" class="px-4 py-2">Home</a>
+    </div>
+    }
+  </div>
+</nav>
+
+<div class="container mx-auto px-4 py-4 max-w-2xl">
   <router-outlet />
 </div>

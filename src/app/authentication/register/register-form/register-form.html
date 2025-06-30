@@ -1,0 +1,143 @@
+<form
+  [formGroup]="registerForm"
+  (ngSubmit)="onSubmit()"
+  class="flex flex-col gap-y-5"
+>
+  <div class="flex flex-col gap-1">
+    <label for="first_name">First name</label>
+    <input
+      formControlName="first_name"
+      type="text"
+      id="first_name"
+      autocomplete="given-name"
+      placeholder="Your first name"
+      required
+      minlength="2"
+      maxlength="255"
+      class="border border-gray-300 rounded px-2.5 py-1 placeholder:text-gray-400 placeholder:text-sm"
+      [class.border-red-500]="registerForm.get('first_name')?.invalid && registerForm.get('first_name')?.touched"
+    />
+    @if (registerForm.get('first_name')?.invalid && registerForm.get('first_name')?.touched) {
+      <div class="text-red-500 text-sm mt-1">
+        @if (registerForm.get('first_name')?.errors?.['required']) {
+          <span>First name is required</span>
+        }
+        @if (registerForm.get('first_name')?.errors?.['minlength']) {
+          <span>First name must be at least 2 characters long</span>
+        }
+      </div>
+    }
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label for="last_name">Last name</label>
+    <input
+      formControlName="last_name"
+      type="text"
+      id="last_name"
+      autocomplete="family-name"
+      placeholder="Your last name"
+      required
+      minlength="2"
+      maxlength="255"
+      class="border border-gray-300 rounded px-2.5 py-1 placeholder:text-gray-400 placeholder:text-sm"
+      [class.border-red-500]="registerForm.get('last_name')?.invalid && registerForm.get('last_name')?.touched"
+    />
+    @if (registerForm.get('last_name')?.invalid && registerForm.get('last_name')?.touched) {
+      <div class="text-red-500 text-sm mt-1">
+        @if (registerForm.get('last_name')?.errors?.['required']) {
+          <span>Last name is required</span>
+        }
+        @if (registerForm.get('last_name')?.errors?.['minlength']) {
+          <span>Last name must be at least 2 characters long</span>
+        }
+      </div>
+    }
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label for="email">Email</label>
+    <input
+      formControlName="email"
+      type="email"
+      id="email"
+      autocomplete="email"
+      placeholder="Your email"
+      required
+      minlength="5"
+      maxlength="255"
+      class="border border-gray-300 rounded px-2.5 py-1 placeholder:text-gray-400 placeholder:text-sm"
+      [class.border-red-500]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched"
+    />
+    @if (registerForm.get('email')?.invalid && registerForm.get('email')?.touched) {
+      <div class="text-red-500 text-sm mt-1">
+        @if (registerForm.get('email')?.errors?.['required']) {
+          <span>Email is required</span>
+        }
+        @if (registerForm.get('email')?.errors?.['email']) {
+          <span>Please enter a valid email address</span>
+        }
+      </div>
+    }
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label for="password">Password</label>
+    <input
+      formControlName="password"
+      type="password"
+      id="password"
+      autocomplete="new-password"
+      placeholder="Your password"
+      required
+      class="border border-gray-300 rounded px-2.5 py-1 placeholder:text-gray-400 placeholder:text-sm"
+      [class.border-red-500]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched"
+    />
+    @if (registerForm.get('password')?.invalid && registerForm.get('password')?.touched) {
+      <div class="text-red-500 text-sm mt-1">
+        @if (registerForm.get('password')?.errors?.['required']) {
+          <span>Password is required</span>
+        }
+        @if (registerForm.get('password')?.errors?.['minlength']) {
+          <span>Password must be at least 6 characters long</span>
+        }
+      </div>
+    }
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label for="password_confirmation">Password confirmation</label>
+    <input
+      formControlName="password_confirmation"
+      type="password"
+      id="password_confirmation"
+      autocomplete="new-password"
+      placeholder="Confirm your password"
+      required
+      class="border border-gray-300 rounded px-2.5 py-1 placeholder:text-gray-400 placeholder:text-sm"
+      [class.border-red-500]="(registerForm.get('password_confirmation')?.invalid && registerForm.get('password_confirmation')?.touched) || (registerForm.errors?.['passwordMismatch'] && registerForm.get('password_confirmation')?.touched)"
+    />
+    @if (registerForm.get('password_confirmation')?.invalid && registerForm.get('password_confirmation')?.touched) {
+      <div class="text-red-500 text-sm mt-1">
+        @if (registerForm.get('password_confirmation')?.errors?.['required']) {
+          <span>Password confirmation is required</span>
+        }
+      </div>
+    }
+    @if (registerForm.errors?.['passwordMismatch'] && registerForm.get('password_confirmation')?.touched) {
+      <div class="text-red-500 text-sm mt-1">
+        <span>Passwords do not match</span>
+      </div>
+    }
+  </div>
+
+  <div>
+    <button
+      [disabled]="!registerForm.valid"
+      type="submit"
+      class="bg-black text-white px-2.5 py-1 rounded w-full cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
+    >
+      Sign up
+    </button>
+  </div>
+</form>
