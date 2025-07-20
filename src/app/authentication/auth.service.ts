@@ -38,6 +38,15 @@ export class AuthService {
       );
   }
 
+  logout(): Observable<void> {
+    return this.httpClient.delete<void>(`${this.apiUrl}/logout`).pipe(
+      tap(() => {
+        this.user.set(null);
+        this.clearUserFromStorage();
+      })
+    );
+  }
+
   private getUserFromStorage(): UserAuthenticatedData | null {
     const storedUser = sessionStorage.getItem('user');
     return storedUser ? JSON.parse(storedUser) : null;
@@ -45,5 +54,9 @@ export class AuthService {
 
   private saveUserToStorage(user: UserAuthenticatedData): void {
     sessionStorage.setItem('user', JSON.stringify(user));
+  }
+
+  private clearUserFromStorage(): void {
+    sessionStorage.removeItem('user');
   }
 }

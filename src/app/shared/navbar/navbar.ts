@@ -1,17 +1,43 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { AuthService } from '../../authentication/auth.service';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { ToastService } from '../toast/toast.service';
 
 @Component({
   selector: 'app-navbar',
-  imports: [RouterLink],
+  imports: [RouterLink, CommonModule],
   templateUrl: './navbar.html',
   styleUrl: './navbar.css',
 })
 export class Navbar {
+  private router = inject(Router);
   private authService = inject(AuthService);
+  private toastService = inject(ToastService);
 
-  displayMenu() {
+  isMenuOpen = signal(false);
+
+  isAuthenticated() {
     return this.authService.isAuthenticated();
+  }
+
+  toggleMenu() {
+    this.isMenuOpen.set(!this.isMenuOpen());
+  }
+
+  closeMenu() {
+    this.isMenuOpen.set(false);
+  }
+
+  logout() {
+    this.authService.logout().subscribe({
+      next: () => {
+        this.toastService.showSuccess('Logging out successfully!');
+        this.router.navigate(['/login']);
+      },
+      error: () => {
+        this.toastService.showError('Error while logging out!');
+      },
+    });
   }
 }
