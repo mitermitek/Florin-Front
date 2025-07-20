@@ -1,0 +1,134 @@
+<form
+  [formGroup]="transactionForm"
+  (ngSubmit)="onSubmit()"
+  class="flex flex-col gap-y-5"
+>
+  <div class="flex flex-col gap-1">
+    <label for="type">Type</label>
+    <select
+      formControlName="type"
+      id="type"
+      required
+      class="border border-gray-300 rounded px-2.5 py-1 placeholder:text-gray-400 placeholder:text-sm"
+      [class.border-red-500]="transactionForm.get('type')?.invalid && transactionForm.get('type')?.touched"
+    >
+      @for (type of typeOptions; track type) {
+      <option [value]="type">
+        {{ type === Type.INCOME ? 'Income' : 'Expense' }}
+      </option>
+      }
+    </select>
+    @if (transactionForm.get('type')?.invalid &&
+    transactionForm.get('type')?.touched) {
+    <div class="text-red-500 text-sm">
+      @if (transactionForm.get('type')?.errors?.['required']) {
+      <span>Transaction type is required</span>
+      }
+    </div>
+    }
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label for="date">Date</label>
+    <input
+      formControlName="date"
+      type="date"
+      id="date"
+      required
+      class="border border-gray-300 rounded px-2.5 py-1 placeholder:text-gray-400 placeholder:text-sm"
+      [class.border-red-500]="transactionForm.get('date')?.invalid && transactionForm.get('date')?.touched"
+    />
+    @if (transactionForm.get('date')?.invalid &&
+    transactionForm.get('date')?.touched) {
+    <div class="text-red-500 text-sm">
+      @if (transactionForm.get('date')?.errors?.['required']) {
+      <span>Date is required</span>
+      } @if (transactionForm.get('date')?.errors?.['invalidDateFormat']) {
+      <span>Date must be in YYYY-MM-DD format</span>
+      } @if (transactionForm.get('date')?.errors?.['invalidDate']) {
+      <span>Please enter a valid date</span>
+      }
+    </div>
+    }
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label for="amount">Amount</label>
+    <input
+      formControlName="amount"
+      type="number"
+      id="amount"
+      placeholder="0.00"
+      step="0.01"
+      min="0"
+      required
+      class="border border-gray-300 rounded px-2.5 py-1 placeholder:text-gray-400 placeholder:text-sm"
+      [class.border-red-500]="transactionForm.get('amount')?.invalid && transactionForm.get('amount')?.touched"
+    />
+    @if (transactionForm.get('amount')?.invalid &&
+    transactionForm.get('amount')?.touched) {
+    <div class="text-red-500 text-sm">
+      @if (transactionForm.get('amount')?.errors?.['required']) {
+      <span>Amount is required</span>
+      } @if (transactionForm.get('amount')?.errors?.['min']) {
+      <span>Amount must be greater than 0</span>
+      } @if (transactionForm.get('amount')?.errors?.['invalidDecimal']) {
+      <span>Amount must have maximum 2 decimal places</span>
+      }
+    </div>
+    }
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label for="description">Description</label>
+    <textarea
+      formControlName="description"
+      id="description"
+      placeholder="Transaction description (optional)"
+      maxlength="255"
+      rows="3"
+      class="border border-gray-300 rounded px-2.5 py-1 placeholder:text-gray-400 placeholder:text-sm resize-none"
+      [class.border-red-500]="transactionForm.get('description')?.invalid && transactionForm.get('description')?.touched"
+    ></textarea>
+    @if (transactionForm.get('description')?.invalid &&
+    transactionForm.get('description')?.touched) {
+    <div class="text-red-500 text-sm">
+      @if (transactionForm.get('description')?.errors?.['maxlength']) {
+      <span>Description must not exceed 255 characters</span>
+      }
+    </div>
+    }
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label for="category">Category</label>
+    <select
+      formControlName="category_id"
+      id="category"
+      required
+      class="border border-gray-300 rounded px-2.5 py-1 placeholder:text-gray-400 placeholder:text-sm"
+      [class.border-red-500]="transactionForm.get('category_id')?.invalid && transactionForm.get('category_id')?.touched"
+    >
+      @for (category of categories(); track category.id) {
+      <option [value]="category.id">{{ category.name }}</option>
+      }
+    </select>
+    @if (transactionForm.get('category_id')?.invalid &&
+    transactionForm.get('category_id')?.touched) {
+    <div class="text-red-500 text-sm">
+      @if (transactionForm.get('category_id')?.errors?.['required']) {
+      <span>Category is required</span>
+      }
+    </div>
+    }
+  </div>
+
+  <div>
+    <button
+      type="submit"
+      class="bg-black text-white px-2.5 py-1 rounded w-full cursor-pointer"
+    >
+      Save Transaction
+    </button>
+  </div>
+</form>
