@@ -1,0 +1,109 @@
+@if (meta() && meta().last_page > 1) {
+<nav aria-label="Pagination" class="flex flex-col items-center space-y-4">
+  <div class="flex items-center justify-center space-x-2">
+    <!-- Previous button -->
+    <button
+      class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-l-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+      (click)="goToPage(meta().current_page - 1)"
+      [disabled]="!links().prev"
+    >
+      @if (isOnMobile) {
+      <svg
+        class="w-4 h-4"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M15 19l-7-7 7-7"
+        ></path>
+      </svg>
+      } @else { Previous }
+    </button>
+
+    <!-- First page -->
+    @if (paginationData().showFirstPage) {
+    <button
+      class="px-3 py-2 text-sm font-medium border cursor-pointer"
+      [class]="meta().current_page === 1 ? 'text-white bg-black border-black' : 'text-gray-700 bg-white border-gray-300 hover:bg-gray-50'"
+      (click)="goToPage(1)"
+    >
+      1
+    </button>
+    }
+
+    <!-- Ellipsis at the beginning -->
+    @if (paginationData().showStartEllipsis) {
+    <span
+      class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300"
+    >
+      ...
+    </span>
+    }
+
+    <!-- Visible pages -->
+    @for (page of paginationData().visiblePages; track $index) {
+    <button
+      class="px-3 py-2 text-sm font-medium border cursor-pointer"
+      [class]="page === meta().current_page ? 'text-white bg-black border-black' : 'text-gray-700 bg-white border-gray-300 hover:bg-gray-50'"
+      (click)="goToPage(page)"
+    >
+      {{ page }}
+    </button>
+    }
+
+    <!-- End ellipsis -->
+    @if (paginationData().showEndEllipsis) {
+    <span
+      class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300"
+    >
+      ...
+    </span>
+    }
+
+    <!-- Last page -->
+    @if (paginationData().showLastPage) {
+    <button
+      class="px-3 py-2 text-sm font-medium border cursor-pointer"
+      [class]="meta().current_page === meta().last_page ? 'text-white bg-black border-black' : 'text-gray-700 bg-white border-gray-300 hover:bg-gray-50'"
+      (click)="goToPage(meta().last_page)"
+    >
+      {{ meta().last_page }}
+    </button>
+    }
+
+    <!-- Next button -->
+    <button
+      class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-r-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+      (click)="goToPage(meta().current_page + 1)"
+      [disabled]="!links().next"
+    >
+      @if (isOnMobile) {
+      <svg
+        class="w-4 h-4"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M9 5l7 7-7 7"
+        ></path>
+      </svg>
+      } @else { Next }
+    </button>
+  </div>
+
+  <!-- Pagination info -->
+  @if (showInfo()) {
+  <div class="text-sm text-gray-500 text-center">
+    Showing {{ meta().from }} to {{ meta().to }} of {{ meta().total }} results
+  </div>
+  }
+</nav>
+}

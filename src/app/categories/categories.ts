@@ -1,12 +1,13 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CategoriesService } from './categories.service';
-import { CategoryData, CategoryFormData } from './category.data';
+import { CategoriesPaginatedData, CategoryData, CategoryFormData } from './category.data';
 import { ToastService } from '../shared/toast/toast.service';
 import { CategoryForm } from './category-form/category-form';
+import { Pagination } from "../shared/pagination/pagination";
 
 @Component({
   selector: 'app-categories',
-  imports: [CategoryForm],
+  imports: [CategoryForm, Pagination],
   templateUrl: './categories.html',
   styleUrl: './categories.css',
 })
@@ -14,7 +15,7 @@ export class Categories implements OnInit {
   private categoriesService = inject(CategoriesService);
   private toastService = inject(ToastService);
 
-  categories = signal<CategoryData[]>([]);
+  categories = signal<CategoriesPaginatedData | null>(null);
   category = signal<CategoryData | undefined>(undefined);
   isModalOpen = signal<boolean>(false);
   isConfirmationModalOpen = signal<boolean>(false);
@@ -64,8 +65,12 @@ export class Categories implements OnInit {
     this.isConfirmationModalOpen.set(false);
   }
 
-  private loadCategories() {
-    this.categoriesService.getCategories().subscribe({
+  onPageChange(page: number) {
+    this.loadCategories(page);
+  }
+
+  private loadCategories(page: number = 1) {
+    this.categoriesService.getCategories(page).subscribe({
       next: (response) => this.categories.set(response),
       error: () => this.toastService.showError('Error loading categories!'),
     });

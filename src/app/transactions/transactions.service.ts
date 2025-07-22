@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../environments/environment.development';
 import { Observable } from 'rxjs';
-import { TransactionData, TransactionFormData } from './transaction.data';
+import { TransactionData, TransactionFormData, TransactionsPaginatedData } from './transaction.data';
 
 @Injectable({
   providedIn: 'root'
@@ -12,8 +12,8 @@ export class TransactionsService {
 
   private apiUrl = `${environment.apiUrl}/v1/user/transactions`;
 
-  getTransactions(): Observable<TransactionData[]> {
-    return this.httpClient.get<TransactionData[]>(`${this.apiUrl}`);
+  getTransactions(page: number): Observable<TransactionsPaginatedData> {
+    return this.httpClient.get<TransactionsPaginatedData>(`${this.apiUrl}?page=${page}`);
   }
 
   createTransaction(data: TransactionFormData): Observable<TransactionData> {

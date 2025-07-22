@@ -1,12 +1,13 @@
 import { Component, inject, signal } from '@angular/core';
 import { TransactionsService } from './transactions.service';
 import { ToastService } from '../shared/toast/toast.service';
-import { TransactionData, TransactionFormData, Type } from './transaction.data';
+import { TransactionData, TransactionFormData, TransactionsPaginatedData, Type } from './transaction.data';
 import { TransactionForm } from './transaction-form/transaction-form';
+import { Pagination } from "../shared/pagination/pagination";
 
 @Component({
   selector: 'app-transactions',
-  imports: [TransactionForm],
+  imports: [TransactionForm, Pagination],
   templateUrl: './transactions.html',
   styleUrl: './transactions.css'
 })
@@ -14,7 +15,7 @@ export class Transactions {
   private transactionsService = inject(TransactionsService);
   private toastService = inject(ToastService);
 
-  transactions = signal<TransactionData[]>([]);
+  transactions = signal<TransactionsPaginatedData | null>(null);
   transaction = signal<TransactionData | undefined>(undefined);
   isModalOpen = signal<boolean>(false);
   isConfirmationModalOpen = signal<boolean>(false);
@@ -66,8 +67,12 @@ export class Transactions {
     this.isConfirmationModalOpen.set(false);
   }
 
-  private loadTransactions() {
-    this.transactionsService.getTransactions().subscribe({
+  onPageChange(page: number) {
+    this.loadTransactions(page);
+  }
+
+  private loadTransactions(page: number = 1) {
+    this.transactionsService.getTransactions(page).subscribe({
       next: (response) => this.transactions.set(response),
       error: () => this.toastService.showError('Error loading transactions!'),
     });

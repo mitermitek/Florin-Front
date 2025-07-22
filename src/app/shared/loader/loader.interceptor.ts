@@ -6,7 +6,18 @@ import { finalize } from 'rxjs';
 export const loaderInterceptor: HttpInterceptorFn = (req, next) => {
   const loaderService = inject(LoaderService);
 
-  loaderService.show();
+  // Skip loading if the request has the 'skip-loading' header
+  const skipLoading = req.headers.has('skip-loading');
 
-  return next(req).pipe(finalize(() => loaderService.hide()));
+  if (!skipLoading) {
+    loaderService.show();
+  }
+
+  return next(req).pipe(
+    finalize(() => {
+      if (!skipLoading) {
+        loaderService.hide();
+      }
+    })
+  );
 };

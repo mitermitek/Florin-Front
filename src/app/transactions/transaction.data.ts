@@ -1,4 +1,8 @@
 import { CategoryData } from '../categories/category.data';
+import {
+  PaginationLinks,
+  PaginationMeta,
+} from '../shared/pagination/pagination.data';
 
 export interface TransactionData {
   id: number;
@@ -20,4 +24,10 @@ export interface TransactionFormData {
 export enum Type {
   EXPENSE = 'expense',
   INCOME = 'income',
+}
+
+export interface TransactionsPaginatedData {
+  data: TransactionData[];
+  links: PaginationLinks;
+  meta: PaginationMeta;
 }

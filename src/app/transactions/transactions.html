@@ -31,7 +31,7 @@
       <th scope="col" class="px-6 py-3">Actions</th>
     </thead>
     <tbody class="divide-y divide-gray-200">
-      @for (transaction of transactions; track transaction.id) {
+      @for (transaction of transactions.data; track transaction.id) {
       <tr>
         <td scope="row" class="px-6 py-4 whitespace-nowrap">
           {{ transaction.date }}
@@ -90,6 +90,8 @@
     </tbody>
   </table>
 </div>
+
+<app-pagination [meta]="transactions.meta" [links]="transactions.links" (pageChange)="onPageChange($event)" />
 }
 
 @if (isModalOpen()) {

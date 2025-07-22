@@ -29,7 +29,7 @@
       <th scope="col" class="px-6 py-3">Actions</th>
     </thead>
     <tbody class="divide-y divide-gray-200">
-      @for (category of categories; track category.id) {
+      @for (category of categories.data; track category.id) {
       <tr>
         <td scope="row" class="px-6 py-4 whitespace-nowrap">
           {{ category.name }}
@@ -82,6 +82,8 @@
     </tbody>
   </table>
 </div>
+
+<app-pagination [meta]="categories.meta" [links]="categories.links" (pageChange)="onPageChange($event)" />
 }
 
 @if (isModalOpen()) {

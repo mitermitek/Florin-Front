@@ -15,6 +15,7 @@ import {
 import { CategoryData } from '../../categories/category.data';
 import { CategoriesService } from '../../categories/categories.service';
 import { ToastService } from '../../shared/toast/toast.service';
+import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-transaction-form',
@@ -47,10 +48,11 @@ export class TransactionForm {
     ]),
     description: new FormControl<string>('', [Validators.maxLength(255)]),
     category_id: new FormControl<number | null>(null, [Validators.required]),
+    category_name: new FormControl<string>('', [Validators.required]),
   });
 
   ngOnInit(): void {
-    this.loadCategories();
+    this.searchCategories();
 
     const transaction = this.transaction();
     if (transaction) {
@@ -60,8 +62,40 @@ export class TransactionForm {
         amount: Number(transaction.amount),
         description: transaction.description,
         category_id: transaction.category.id,
+        category_name: transaction.category.name,
       });
     }
+
+    // Listen to category_name changes with debounce for filtering
+    this.transactionForm
+      .get('category_name')
+      ?.valueChanges.pipe(debounceTime(500), distinctUntilChanged())
+      .subscribe((categoryName) => {
+        if (categoryName) {
+          // Filter categories based on input without showing loader
+          this.searchCategories(1, categoryName);
+
+          // Update category_id based on exact match
+          const category = this.categories().find(
+            (cat) => cat.name === categoryName
+          );
+          if (category) {
+            this.transactionForm
+              .get('category_id')
+              ?.setValue(category.id, { emitEvent: false });
+          } else {
+            this.transactionForm
+              .get('category_id')
+              ?.setValue(null, { emitEvent: false });
+          }
+        } else {
+          // Load first page of categories when input is empty
+          this.searchCategories();
+          this.transactionForm
+            .get('category_id')
+            ?.setValue(null, { emitEvent: false });
+        }
+      });
   }
 
   private getTodayDateString(): string {
@@ -71,27 +105,22 @@ export class TransactionForm {
 
   onSubmit(): void {
     if (this.transactionForm.valid) {
-      this.transactionSubmit.emit(
-        this.transactionForm.value as TransactionFormData
-      );
+      const formValue = this.transactionForm.value;
+      // Remove category_name from the submitted data, keep only category_id
+      const { category_name, ...transactionData } = formValue;
+      this.transactionSubmit.emit(transactionData as TransactionFormData);
       this.transactionForm.reset();
     } else {
       this.transactionForm.markAllAsTouched();
     }
   }
 
-  private loadCategories(): void {
-    this.categoriesService.getCategories().subscribe({
+  private searchCategories(page: number = 1, name?: string): void {
+    this.categoriesService.searchCategories(page, name).subscribe({
       next: (response) => {
-        this.categories.set(response);
-        // Set first category as default if no transaction is being edited
-        if (!this.transaction() && response.length > 0) {
-          this.transactionForm.patchValue({
-            category_id: response[0].id,
-          });
-        }
+        this.categories.set(response.data);
       },
-      error: () => this.toastService.showError('Error loading categories!'),
+      error: () => this.toastService.showError('Error searching categories!'),
     });
   }
 

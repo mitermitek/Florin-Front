@@ -1,8 +1,8 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../environments/environment.development';
 import { Observable } from 'rxjs';
-import { CategoryData, CategoryFormData } from './category.data';
+import { CategoriesPaginatedData, CategoryData, CategoryFormData } from './category.data';
 
 @Injectable({
   providedIn: 'root',
@@ -12,8 +12,23 @@ export class CategoriesService {
 
   private apiUrl = `${environment.apiUrl}/v1/user/categories`;
 
-  getCategories(): Observable<CategoryData[]> {
-    return this.httpClient.get<CategoryData[]>(`${this.apiUrl}`);
+  getCategories(page: number, name?: string): Observable<CategoriesPaginatedData> {
+    let params = `page=${page}`;
+    if (name) {
+      params += `&name=${encodeURIComponent(name)}`;
+    }
+    return this.httpClient.get<CategoriesPaginatedData>(`${this.apiUrl}?${params}`);
+  }
+
+  // Method for searching categories without triggering the loader
+  searchCategories(page: number, name?: string): Observable<CategoriesPaginatedData> {
+    let params = `page=${page}`;
+    if (name) {
+      params += `&name=${encodeURIComponent(name)}`;
+    }
+
+    const headers = new HttpHeaders().set('skip-loading', 'true');
+    return this.httpClient.get<CategoriesPaginatedData>(`${this.apiUrl}?${params}`, { headers });
   }
 
   createCategory(data: CategoryFormData): Observable<CategoryData> {
