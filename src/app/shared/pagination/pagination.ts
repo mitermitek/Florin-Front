@@ -1,4 +1,12 @@
-import { Component, computed, input, output, signal, OnInit, OnDestroy } from '@angular/core';
+import {
+  Component,
+  computed,
+  input,
+  output,
+  signal,
+  OnInit,
+  OnDestroy,
+} from '@angular/core';
 import { PaginationLinks, PaginationMeta } from './pagination.data';
 
 @Component({
@@ -25,54 +33,27 @@ export class Pagination implements OnInit, OnDestroy {
     const maxVisible = this.isMobile() ? 2 : this.maxVisible();
 
     let visiblePages: number[] = [];
-    let showFirstPage = false;
-    let showLastPage = false;
-    let showStartEllipsis = false;
-    let showEndEllipsis = false;
 
     if (total <= maxVisible + 2) {
-      // All pages fit
+      // All pages fit, show them all
       visiblePages = Array.from({ length: total }, (_, i) => i + 1);
     } else {
-      // Calculation of visible pages around the current page
+      // Calculate the range of pages to show around current page
       let start = Math.max(1, current - Math.floor(maxVisible / 2));
       let end = Math.min(total, start + maxVisible - 1);
 
-      // Adjust if close to the end
+      // Adjust start if we're too close to the end
       if (end === total) {
         start = Math.max(1, total - maxVisible + 1);
       }
 
-      // Visible pages (without the first and last)
-      if (start > 2) {
-        showFirstPage = true;
-        showStartEllipsis = start > 3;
-      }
-
-      if (end < total - 1) {
-        showLastPage = true;
-        showEndEllipsis = end < total - 2;
-      }
-
-      // Generate visible pages
+      // Generate visible pages in the calculated range
       for (let i = start; i <= end; i++) {
-        if (i !== 1 && i !== total) {
-          visiblePages.push(i);
-        } else if (i === 1 && !showFirstPage) {
-          visiblePages.push(i);
-        } else if (i === total && !showLastPage) {
-          visiblePages.push(i);
-        }
+        visiblePages.push(i);
       }
     }
 
-    return {
-      visiblePages,
-      showFirstPage,
-      showLastPage,
-      showStartEllipsis,
-      showEndEllipsis,
-    };
+    return { visiblePages };
   });
 
   ngOnInit() {
@@ -89,10 +70,6 @@ export class Pagination implements OnInit, OnDestroy {
 
   private checkScreenSize() {
     this.isMobile.set(window.innerWidth < 768);
-  }
-
-  get isOnMobile() {
-    return this.isMobile();
   }
 
   goToPage(page: number) {

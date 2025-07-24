@@ -1,13 +1,35 @@
 @if (meta() && meta().last_page > 1) {
-<nav aria-label="Pagination" class="flex flex-col items-center space-y-4">
-  <div class="flex items-center justify-center space-x-2">
+<nav aria-label="Pagination" class="flex flex-col items-center gap-4">
+  <div class="flex items-center space-x-2">
+    <!-- First page icon -->
+    <button
+      class="flex items-center justify-center w-10 h-10 text-gray-600 bg-white border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-1 transition-colors"
+      (click)="goToPage(1)"
+      [disabled]="meta().current_page === 1"
+      title="Go to first page"
+    >
+      <svg
+        class="w-4 h-4"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M11 19l-7-7 7-7m8 14l-7-7 7-7"
+        />
+      </svg>
+    </button>
+
     <!-- Previous button -->
     <button
-      class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-l-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+      class="flex items-center justify-center w-10 h-10 text-gray-600 bg-white border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-1 transition-colors"
       (click)="goToPage(meta().current_page - 1)"
       [disabled]="!links().prev"
+      title="Previous page"
     >
-      @if (isOnMobile) {
       <svg
         class="w-4 h-4"
         fill="none"
@@ -19,69 +41,30 @@
           stroke-linejoin="round"
           stroke-width="2"
           d="M15 19l-7-7 7-7"
-        ></path>
+        />
       </svg>
-      } @else { Previous }
     </button>
-
-    <!-- First page -->
-    @if (paginationData().showFirstPage) {
-    <button
-      class="px-3 py-2 text-sm font-medium border cursor-pointer"
-      [class]="meta().current_page === 1 ? 'text-white bg-black border-black' : 'text-gray-700 bg-white border-gray-300 hover:bg-gray-50'"
-      (click)="goToPage(1)"
-    >
-      1
-    </button>
-    }
-
-    <!-- Ellipsis at the beginning -->
-    @if (paginationData().showStartEllipsis) {
-    <span
-      class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300"
-    >
-      ...
-    </span>
-    }
 
     <!-- Visible pages -->
     @for (page of paginationData().visiblePages; track $index) {
     <button
-      class="px-3 py-2 text-sm font-medium border cursor-pointer"
-      [class]="page === meta().current_page ? 'text-white bg-black border-black' : 'text-gray-700 bg-white border-gray-300 hover:bg-gray-50'"
+      class="flex items-center justify-center w-10 h-10 text-sm font-medium border rounded cursor-pointer focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-1"
+      [class]="page === meta().current_page
+        ? 'text-white bg-black border-black hover:bg-gray-800'
+        : 'text-gray-700 bg-white border-gray-300 hover:bg-gray-50'"
       (click)="goToPage(page)"
     >
       {{ page }}
     </button>
     }
 
-    <!-- End ellipsis -->
-    @if (paginationData().showEndEllipsis) {
-    <span
-      class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300"
-    >
-      ...
-    </span>
-    }
-
-    <!-- Last page -->
-    @if (paginationData().showLastPage) {
-    <button
-      class="px-3 py-2 text-sm font-medium border cursor-pointer"
-      [class]="meta().current_page === meta().last_page ? 'text-white bg-black border-black' : 'text-gray-700 bg-white border-gray-300 hover:bg-gray-50'"
-      (click)="goToPage(meta().last_page)"
-    >
-      {{ meta().last_page }}
-    </button>
-    }
-
     <!-- Next button -->
     <button
-      class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-r-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+      class="flex items-center justify-center w-10 h-10 text-gray-600 bg-white border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-1 transition-colors"
       (click)="goToPage(meta().current_page + 1)"
       [disabled]="!links().next"
+      title="Next page"
     >
-      @if (isOnMobile) {
       <svg
         class="w-4 h-4"
         fill="none"
@@ -93,9 +76,30 @@
           stroke-linejoin="round"
           stroke-width="2"
           d="M9 5l7 7-7 7"
-        ></path>
+        />
       </svg>
-      } @else { Next }
+    </button>
+
+    <!-- Last page icon -->
+    <button
+      class="flex items-center justify-center w-10 h-10 text-gray-600 bg-white border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-1 transition-colors"
+      (click)="goToPage(meta().last_page)"
+      [disabled]="meta().current_page === meta().last_page"
+      title="Go to last page"
+    >
+      <svg
+        class="w-4 h-4"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M13 5l7 7-7 7M5 5l7 7-7 7"
+        />
+      </svg>
     </button>
   </div>
 
