@@ -1,15 +1,21 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, viewChild } from '@angular/core';
 import { TransactionsService } from './transactions.service';
 import { ToastService } from '../shared/toast/toast.service';
-import { TransactionData, TransactionFormData, TransactionsPaginatedData, Type } from './transaction.data';
+import {
+  TransactionData,
+  TransactionFormData,
+  TransactionsPaginatedData,
+  Type,
+} from './transaction.data';
 import { TransactionForm } from './transaction-form/transaction-form';
-import { Pagination } from "../shared/pagination/pagination";
+import { Pagination } from '../shared/pagination/pagination';
+import { Modal } from '../shared/modal/modal';
 
 @Component({
   selector: 'app-transactions',
-  imports: [TransactionForm, Pagination],
+  imports: [TransactionForm, Pagination, Modal],
   templateUrl: './transactions.html',
-  styleUrl: './transactions.css'
+  styleUrl: './transactions.css',
 })
 export class Transactions {
   private transactionsService = inject(TransactionsService);
@@ -17,8 +23,10 @@ export class Transactions {
 
   transactions = signal<TransactionsPaginatedData | null>(null);
   transaction = signal<TransactionData | undefined>(undefined);
-  isModalOpen = signal<boolean>(false);
+  isCreationModalOpen = signal<boolean>(false);
   isConfirmationModalOpen = signal<boolean>(false);
+
+  transactionFormRef = viewChild<TransactionForm>('transactionForm');
 
   Type = Type;
 
@@ -36,6 +44,13 @@ export class Transactions {
     }
   }
 
+  confirmCreation(): void {
+    const formRef = this.transactionFormRef();
+    if (formRef) {
+      formRef.submitForm();
+    }
+  }
+
   confirmDeletion(): void {
     const transaction = this.transaction();
 
@@ -47,14 +62,14 @@ export class Transactions {
     }
   }
 
-  openModal(transaction?: TransactionData): void {
+  openCreationModal(transaction?: TransactionData): void {
     this.transaction.set(transaction);
-    this.isModalOpen.set(true);
+    this.isCreationModalOpen.set(true);
   }
 
-  closeModal(): void {
+  closeCreationModal(): void {
     this.transaction.set(undefined);
-    this.isModalOpen.set(false);
+    this.isCreationModalOpen.set(false);
   }
 
   openConfirmationModal(transaction: TransactionData): void {
@@ -82,18 +97,21 @@ export class Transactions {
     this.transactionsService.createTransaction(data).subscribe({
       next: () => {
         this.toastService.showSuccess('Transaction created successfully!');
-        this.closeModal();
+        this.closeCreationModal();
         this.loadTransactions();
       },
       error: () => this.toastService.showError('Error creating transaction!'),
     });
   }
 
-  private updateTransaction(transaction: TransactionData, data: TransactionFormData): void {
+  private updateTransaction(
+    transaction: TransactionData,
+    data: TransactionFormData
+  ): void {
     this.transactionsService.updateTransaction(transaction.id, data).subscribe({
       next: () => {
         this.toastService.showSuccess('Transaction updated successfully!');
-        this.closeModal();
+        this.closeCreationModal();
         this.loadTransactions();
       },
       error: () => this.toastService.showError('Error updating transaction!'),

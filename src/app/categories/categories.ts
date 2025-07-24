@@ -1,13 +1,18 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal, viewChild } from '@angular/core';
 import { CategoriesService } from './categories.service';
-import { CategoriesPaginatedData, CategoryData, CategoryFormData } from './category.data';
+import {
+  CategoriesPaginatedData,
+  CategoryData,
+  CategoryFormData,
+} from './category.data';
 import { ToastService } from '../shared/toast/toast.service';
 import { CategoryForm } from './category-form/category-form';
-import { Pagination } from "../shared/pagination/pagination";
+import { Pagination } from '../shared/pagination/pagination';
+import { Modal } from '../shared/modal/modal';
 
 @Component({
   selector: 'app-categories',
-  imports: [CategoryForm, Pagination],
+  imports: [CategoryForm, Pagination, Modal],
   templateUrl: './categories.html',
   styleUrl: './categories.css',
 })
@@ -17,8 +22,10 @@ export class Categories implements OnInit {
 
   categories = signal<CategoriesPaginatedData | null>(null);
   category = signal<CategoryData | undefined>(undefined);
-  isModalOpen = signal<boolean>(false);
+  isCreationModalOpen = signal<boolean>(false);
   isConfirmationModalOpen = signal<boolean>(false);
+
+  categoryFormRef = viewChild<CategoryForm>('categoryForm');
 
   ngOnInit(): void {
     this.loadCategories();
@@ -34,6 +41,13 @@ export class Categories implements OnInit {
     }
   }
 
+  confirmCreation(): void {
+    const formRef = this.categoryFormRef();
+    if (formRef) {
+      formRef.submitForm();
+    }
+  }
+
   confirmDeletion(): void {
     const category = this.category();
 
@@ -45,14 +59,14 @@ export class Categories implements OnInit {
     }
   }
 
-  openModal(category?: CategoryData): void {
+  openCreationModal(category?: CategoryData): void {
     this.category.set(category);
-    this.isModalOpen.set(true);
+    this.isCreationModalOpen.set(true);
   }
 
-  closeModal(): void {
+  closeCreationModal(): void {
     this.category.set(undefined);
-    this.isModalOpen.set(false);
+    this.isCreationModalOpen.set(false);
   }
 
   openConfirmationModal(category: CategoryData): void {
@@ -80,7 +94,7 @@ export class Categories implements OnInit {
     this.categoriesService.createCategory(data).subscribe({
       next: () => {
         this.toastService.showSuccess('Category created successfully!');
-        this.closeModal();
+        this.closeCreationModal();
         this.loadCategories();
       },
       error: () => this.toastService.showError('Error creating category!'),
@@ -91,7 +105,7 @@ export class Categories implements OnInit {
     this.categoriesService.updateCategory(category.id, data).subscribe({
       next: () => {
         this.toastService.showSuccess('Category updated successfully!');
-        this.closeModal();
+        this.closeCreationModal();
         this.loadCategories();
       },
       error: () => this.toastService.showError('Error updating category!'),

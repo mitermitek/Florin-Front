@@ -42,4 +42,12 @@ export class CategoryForm implements OnInit {
       this.categoryForm.markAllAsTouched();
     }
   }
+
+  isValid(): boolean {
+    return this.categoryForm.valid;
+  }
+
+  submitForm(): void {
+    this.onSubmit();
+  }
 }

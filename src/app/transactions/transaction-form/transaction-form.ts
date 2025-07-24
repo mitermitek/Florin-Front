@@ -115,6 +115,14 @@ export class TransactionForm {
     }
   }
 
+  isValid(): boolean {
+    return this.transactionForm.valid;
+  }
+
+  submitForm(): void {
+    this.onSubmit();
+  }
+
   private searchCategories(page: number = 1, name?: string): void {
     this.categoriesService.searchCategories(page, name).subscribe({
       next: (response) => {

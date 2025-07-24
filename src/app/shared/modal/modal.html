@@ -1,0 +1,45 @@
+<div class="fixed inset-0 bg-black/25 flex items-center justify-center z-50">
+  <div class="bg-white rounded p-6 w-full max-w-md mx-4">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-lg font-semibold">{{ title() }}</h2>
+      <button type="button" class="cursor-pointer" (click)="close()">
+        <svg
+          class="w-6 h-6"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"
+          ></path>
+        </svg>
+      </button>
+    </div>
+
+    <div class="mb-6">
+      <ng-content></ng-content>
+    </div>
+
+    @if (showFooter()) {
+    <div class="flex justify-end gap-3">
+      <button
+        type="button"
+        class="px-4 py-2 text-black border border-gray-300 bg-white rounded cursor-pointer hover:bg-gray-50"
+        (click)="cancel()"
+      >
+        {{ cancelText() }}
+      </button>
+      <button
+        type="button"
+        class="px-4 py-2 bg-black text-white rounded cursor-pointer hover:bg-gray-800"
+        (click)="confirm()"
+      >
+        {{ confirmText() }}
+      </button>
+    </div>
+    }
+  </div>
+</div>
