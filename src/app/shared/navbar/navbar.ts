@@ -1,9 +1,15 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { AuthService } from '../../authentication/auth.service';
 import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ToastService } from '../toast/toast.service';
-import { LucideAngularModule, LogOutIcon, MenuIcon, XIcon } from 'lucide-angular';
+import {
+  LucideAngularModule,
+  LogOutIcon,
+  MenuIcon,
+  XIcon,
+} from 'lucide-angular';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-navbar',
@@ -13,6 +19,7 @@ import { LucideAngularModule, LogOutIcon, MenuIcon, XIcon } from 'lucide-angular
 })
 export class Navbar {
   private router = inject(Router);
+  private destroyRef = inject(DestroyRef);
   private authService = inject(AuthService);
   private toastService = inject(ToastService);
 
@@ -35,14 +42,17 @@ export class Navbar {
   }
 
   logout() {
-    this.authService.logout().subscribe({
-      next: () => {
-        this.toastService.showSuccess('Logging out successfully!');
-        this.router.navigate(['/login']);
-      },
-      error: () => {
-        this.toastService.showError('Error while logging out!');
-      },
-    });
+    this.authService
+      .logout()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.toastService.showSuccess('Logging out successfully!');
+          this.router.navigate(['/login']);
+        },
+        error: () => {
+          this.toastService.showError('Error while logging out!');
+        },
+      });
   }
 }

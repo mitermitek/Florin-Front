@@ -1,4 +1,11 @@
-import { Component, inject, input, output, signal } from '@angular/core';
+import {
+  Component,
+  DestroyRef,
+  inject,
+  input,
+  output,
+  signal,
+} from '@angular/core';
 import {
   TransactionData,
   TransactionFormData,
@@ -15,7 +22,8 @@ import {
 import { CategoryData } from '../../categories/category.data';
 import { CategoriesService } from '../../categories/categories.service';
 import { ToastService } from '../../shared/toast/toast.service';
-import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-transaction-form',
@@ -29,6 +37,7 @@ export class TransactionForm {
 
   private categoriesService = inject(CategoriesService);
   private toastService = inject(ToastService);
+  private destroyRef = inject(DestroyRef);
 
   categories = signal<CategoryData[]>([]);
 
@@ -69,7 +78,11 @@ export class TransactionForm {
     // Listen to category_name changes with debounce for filtering
     this.transactionForm
       .get('category_name')
-      ?.valueChanges.pipe(debounceTime(500), distinctUntilChanged())
+      ?.valueChanges.pipe(
+        takeUntilDestroyed(this.destroyRef),
+        debounceTime(500),
+        distinctUntilChanged()
+      )
       .subscribe((categoryName) => {
         if (categoryName) {
           // Filter categories based on input without showing loader
@@ -124,12 +137,15 @@ export class TransactionForm {
   }
 
   private searchCategories(page: number = 1, name?: string): void {
-    this.categoriesService.searchCategories(page, name).subscribe({
-      next: (response) => {
-        this.categories.set(response.data);
-      },
-      error: () => this.toastService.showError('Error searching categories!'),
-    });
+    this.categoriesService
+      .searchCategories(page, name)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (response) => {
+          this.categories.set(response.data);
+        },
+        error: () => this.toastService.showError('Error searching categories!'),
+      });
   }
 
   private dateFormatValidator(): ValidatorFn {

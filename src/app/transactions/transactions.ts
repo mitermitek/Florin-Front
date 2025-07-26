@@ -1,4 +1,10 @@
-import { Component, inject, signal, viewChild } from '@angular/core';
+import {
+  Component,
+  DestroyRef,
+  inject,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { TransactionsService } from './transactions.service';
 import { ToastService } from '../shared/toast/toast.service';
 import {
@@ -10,7 +16,13 @@ import {
 import { TransactionForm } from './transaction-form/transaction-form';
 import { Pagination } from '../shared/pagination/pagination';
 import { Modal } from '../shared/modal/modal';
-import { LucideAngularModule, PlusIcon, SquarePenIcon, Trash2Icon } from 'lucide-angular';
+import {
+  LucideAngularModule,
+  PlusIcon,
+  SquarePenIcon,
+  Trash2Icon,
+} from 'lucide-angular';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-transactions',
@@ -21,6 +33,7 @@ import { LucideAngularModule, PlusIcon, SquarePenIcon, Trash2Icon } from 'lucide
 export class Transactions {
   private transactionsService = inject(TransactionsService);
   private toastService = inject(ToastService);
+  private destroyRef = inject(DestroyRef);
 
   transactions = signal<TransactionsPaginatedData | null>(null);
   transaction = signal<TransactionData | undefined>(undefined);
@@ -92,45 +105,57 @@ export class Transactions {
   }
 
   private loadTransactions(page: number = 1) {
-    this.transactionsService.getTransactions(page).subscribe({
-      next: (response) => this.transactions.set(response),
-      error: () => this.toastService.showError('Error loading transactions!'),
-    });
+    this.transactionsService
+      .getTransactions(page)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (response) => this.transactions.set(response),
+        error: () => this.toastService.showError('Error loading transactions!'),
+      });
   }
 
   private createTransaction(data: TransactionFormData): void {
-    this.transactionsService.createTransaction(data).subscribe({
-      next: () => {
-        this.toastService.showSuccess('Transaction created successfully!');
-        this.closeCreationModal();
-        this.loadTransactions();
-      },
-      error: () => this.toastService.showError('Error creating transaction!'),
-    });
+    this.transactionsService
+      .createTransaction(data)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.toastService.showSuccess('Transaction created successfully!');
+          this.closeCreationModal();
+          this.loadTransactions();
+        },
+        error: () => this.toastService.showError('Error creating transaction!'),
+      });
   }
 
   private updateTransaction(
     transaction: TransactionData,
     data: TransactionFormData
   ): void {
-    this.transactionsService.updateTransaction(transaction.id, data).subscribe({
-      next: () => {
-        this.toastService.showSuccess('Transaction updated successfully!');
-        this.closeCreationModal();
-        this.loadTransactions();
-      },
-      error: () => this.toastService.showError('Error updating transaction!'),
-    });
+    this.transactionsService
+      .updateTransaction(transaction.id, data)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.toastService.showSuccess('Transaction updated successfully!');
+          this.closeCreationModal();
+          this.loadTransactions();
+        },
+        error: () => this.toastService.showError('Error updating transaction!'),
+      });
   }
 
   private deleteTransaction(transaction: TransactionData): void {
-    this.transactionsService.deleteTransaction(transaction.id).subscribe({
-      next: () => {
-        this.toastService.showSuccess('Transaction deleted successfully!');
-        this.closeConfirmationModal();
-        this.loadTransactions();
-      },
-      error: () => this.toastService.showError('Error deleting transaction!'),
-    });
+    this.transactionsService
+      .deleteTransaction(transaction.id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.toastService.showSuccess('Transaction deleted successfully!');
+          this.closeConfirmationModal();
+          this.loadTransactions();
+        },
+        error: () => this.toastService.showError('Error deleting transaction!'),
+      });
   }
 }

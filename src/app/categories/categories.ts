@@ -1,4 +1,11 @@
-import { Component, inject, OnInit, signal, viewChild } from '@angular/core';
+import {
+  Component,
+  DestroyRef,
+  inject,
+  OnInit,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { CategoriesService } from './categories.service';
 import {
   CategoriesPaginatedData,
@@ -9,7 +16,13 @@ import { ToastService } from '../shared/toast/toast.service';
 import { CategoryForm } from './category-form/category-form';
 import { Pagination } from '../shared/pagination/pagination';
 import { Modal } from '../shared/modal/modal';
-import { LucideAngularModule, PlusIcon, SquarePenIcon, Trash2Icon } from 'lucide-angular';
+import {
+  LucideAngularModule,
+  PlusIcon,
+  SquarePenIcon,
+  Trash2Icon,
+} from 'lucide-angular';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-categories',
@@ -20,6 +33,7 @@ import { LucideAngularModule, PlusIcon, SquarePenIcon, Trash2Icon } from 'lucide
 export class Categories implements OnInit {
   private categoriesService = inject(CategoriesService);
   private toastService = inject(ToastService);
+  private destroyRef = inject(DestroyRef);
 
   categories = signal<CategoriesPaginatedData | null>(null);
   category = signal<CategoryData | undefined>(undefined);
@@ -89,42 +103,54 @@ export class Categories implements OnInit {
   }
 
   private loadCategories(page: number = 1) {
-    this.categoriesService.getCategories(page).subscribe({
-      next: (response) => this.categories.set(response),
-      error: () => this.toastService.showError('Error loading categories!'),
-    });
+    this.categoriesService
+      .getCategories(page)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (response) => this.categories.set(response),
+        error: () => this.toastService.showError('Error loading categories!'),
+      });
   }
 
   private createCategory(data: CategoryFormData): void {
-    this.categoriesService.createCategory(data).subscribe({
-      next: () => {
-        this.toastService.showSuccess('Category created successfully!');
-        this.closeCreationModal();
-        this.loadCategories();
-      },
-      error: () => this.toastService.showError('Error creating category!'),
-    });
+    this.categoriesService
+      .createCategory(data)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.toastService.showSuccess('Category created successfully!');
+          this.closeCreationModal();
+          this.loadCategories();
+        },
+        error: () => this.toastService.showError('Error creating category!'),
+      });
   }
 
   private updateCategory(category: CategoryData, data: CategoryFormData): void {
-    this.categoriesService.updateCategory(category.id, data).subscribe({
-      next: () => {
-        this.toastService.showSuccess('Category updated successfully!');
-        this.closeCreationModal();
-        this.loadCategories();
-      },
-      error: () => this.toastService.showError('Error updating category!'),
-    });
+    this.categoriesService
+      .updateCategory(category.id, data)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.toastService.showSuccess('Category updated successfully!');
+          this.closeCreationModal();
+          this.loadCategories();
+        },
+        error: () => this.toastService.showError('Error updating category!'),
+      });
   }
 
   private deleteCategory(category: CategoryData): void {
-    this.categoriesService.deleteCategory(category.id).subscribe({
-      next: () => {
-        this.toastService.showSuccess('Category deleted successfully!');
-        this.closeConfirmationModal();
-        this.loadCategories();
-      },
-      error: () => this.toastService.showError('Error deleting category!'),
-    });
+    this.categoriesService
+      .deleteCategory(category.id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.toastService.showSuccess('Category deleted successfully!');
+          this.closeConfirmationModal();
+          this.loadCategories();
+        },
+        error: () => this.toastService.showError('Error deleting category!'),
+      });
   }
 }

@@ -1,13 +1,15 @@
 import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
-import { inject } from '@angular/core';
+import { DestroyRef, inject } from '@angular/core';
 import { AuthService } from './auth.service';
 import { ToastService } from '../shared/toast/toast.service';
 import { catchError, switchMap, throwError } from 'rxjs';
 import { Router } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
   const toastService = inject(ToastService);
+  const destroyRef = inject(DestroyRef);
   const router = inject(Router);
   const currentUser = authService.currentUser();
 
@@ -57,11 +59,14 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
               );
 
               // Optionally, you can redirect to login or clear user data
-              authService.logout().subscribe({
-                complete: () => {
-                  router.navigate(['/login']);
-                },
-              });
+              authService
+                .logout()
+                .pipe(takeUntilDestroyed(destroyRef))
+                .subscribe({
+                  complete: () => {
+                    router.navigate(['/login']);
+                  },
+                });
 
               return throwError(() => error);
             })
