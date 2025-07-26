@@ -10,7 +10,7 @@ import { TransactionData, TransactionFormData, TransactionsPaginatedData } from 
 export class TransactionsService {
   private httpClient = inject(HttpClient);
 
-  private apiUrl = `${environment.apiUrl}/v1/user/transactions`;
+  private apiUrl = `${environment.apiUrl}/user/transactions`;
 
   getTransactions(page: number): Observable<TransactionsPaginatedData> {
     return this.httpClient.get<TransactionsPaginatedData>(`${this.apiUrl}?page=${page}`);

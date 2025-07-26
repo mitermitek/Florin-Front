@@ -10,7 +10,7 @@ import { CategoriesPaginatedData, CategoryData, CategoryFormData } from './categ
 export class CategoriesService {
   private httpClient = inject(HttpClient);
 
-  private apiUrl = `${environment.apiUrl}/v1/user/categories`;
+  private apiUrl = `${environment.apiUrl}/user/categories`;
 
   getCategories(page: number, name?: string): Observable<CategoriesPaginatedData> {
     let params = `page=${page}`;

@@ -15,7 +15,7 @@ import { Observable, tap } from 'rxjs';
 export class AuthService {
   private httpClient = inject(HttpClient);
 
-  private apiUrl = `${environment.apiUrl}/v1/auth`;
+  private apiUrl = `${environment.apiUrl}/auth`;
   private user = signal<UserAuthenticatedData | null>(
     this.getUserFromStorage()
   );
