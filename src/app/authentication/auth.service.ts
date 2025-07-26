@@ -47,16 +47,25 @@ export class AuthService {
     );
   }
 
+  refreshToken(): Observable<UserAuthenticatedData> {
+    return this.httpClient.get<UserAuthenticatedData>(`${this.apiUrl}/refresh-token`).pipe(
+      tap((response) => {
+        this.user.set(response);
+        this.saveUserToStorage(response);
+      })
+    );
+  }
+
   private getUserFromStorage(): UserAuthenticatedData | null {
-    const storedUser = sessionStorage.getItem('user');
+    const storedUser = localStorage.getItem('user');
     return storedUser ? JSON.parse(storedUser) : null;
   }
 
   private saveUserToStorage(user: UserAuthenticatedData): void {
-    sessionStorage.setItem('user', JSON.stringify(user));
+    localStorage.setItem('user', JSON.stringify(user));
   }
 
   private clearUserFromStorage(): void {
-    sessionStorage.removeItem('user');
+    localStorage.removeItem('user');
   }
 }

@@ -13,7 +13,8 @@ export interface LoginData {
 
 export interface UserAuthenticatedData {
   user: UserData;
-  token: string;
+  personal_access_token: string;
+  refresh_token: string;
 }
 
 export interface UserData {
