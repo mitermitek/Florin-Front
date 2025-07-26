@@ -1,8 +1,9 @@
 import { Component, input, output } from '@angular/core';
+import { LucideAngularModule, XIcon } from 'lucide-angular';
 
 @Component({
   selector: 'app-modal',
-  imports: [],
+  imports: [LucideAngularModule],
   templateUrl: './modal.html',
   styleUrl: './modal.css',
 })
@@ -15,6 +16,8 @@ export class Modal {
   confirmed = output<void>();
   cancelled = output<void>();
   closed = output<void>();
+
+  readonly XIcon = XIcon;
 
   close() {
     this.closed.emit();

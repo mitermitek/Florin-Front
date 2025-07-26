@@ -10,10 +10,11 @@ import {
 import { TransactionForm } from './transaction-form/transaction-form';
 import { Pagination } from '../shared/pagination/pagination';
 import { Modal } from '../shared/modal/modal';
+import { LucideAngularModule, PlusIcon, SquarePenIcon, Trash2Icon } from 'lucide-angular';
 
 @Component({
   selector: 'app-transactions',
-  imports: [TransactionForm, Pagination, Modal],
+  imports: [TransactionForm, Pagination, Modal, LucideAngularModule],
   templateUrl: './transactions.html',
   styleUrl: './transactions.css',
 })
@@ -29,6 +30,10 @@ export class Transactions {
   transactionFormRef = viewChild<TransactionForm>('transactionForm');
 
   Type = Type;
+
+  readonly PlusIcon = PlusIcon;
+  readonly SquarePenIcon = SquarePenIcon;
+  readonly Trash2Icon = Trash2Icon;
 
   ngOnInit(): void {
     this.loadTransactions();

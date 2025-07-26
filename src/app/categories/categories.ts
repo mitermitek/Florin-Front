@@ -9,10 +9,11 @@ import { ToastService } from '../shared/toast/toast.service';
 import { CategoryForm } from './category-form/category-form';
 import { Pagination } from '../shared/pagination/pagination';
 import { Modal } from '../shared/modal/modal';
+import { LucideAngularModule, PlusIcon, SquarePenIcon, Trash2Icon } from 'lucide-angular';
 
 @Component({
   selector: 'app-categories',
-  imports: [CategoryForm, Pagination, Modal],
+  imports: [CategoryForm, Pagination, Modal, LucideAngularModule],
   templateUrl: './categories.html',
   styleUrl: './categories.css',
 })
@@ -26,6 +27,10 @@ export class Categories implements OnInit {
   isConfirmationModalOpen = signal<boolean>(false);
 
   categoryFormRef = viewChild<CategoryForm>('categoryForm');
+
+  readonly PlusIcon = PlusIcon;
+  readonly SquarePenIcon = SquarePenIcon;
+  readonly Trash2Icon = Trash2Icon;
 
   ngOnInit(): void {
     this.loadCategories();

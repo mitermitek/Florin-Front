@@ -8,10 +8,11 @@ import {
   OnDestroy,
 } from '@angular/core';
 import { PaginationLinks, PaginationMeta } from './pagination.data';
+import { ChevronFirstIcon, ChevronLastIcon, ChevronLeftIcon, ChevronRightIcon, LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-pagination',
-  imports: [],
+  imports: [LucideAngularModule],
   templateUrl: './pagination.html',
   styleUrl: './pagination.css',
 })
@@ -22,6 +23,11 @@ export class Pagination implements OnInit, OnDestroy {
   showInfo = input<boolean>(true);
 
   pageChange = output<number>();
+
+  readonly ChevronFirstIcon = ChevronFirstIcon;
+  readonly ChevronLastIcon = ChevronLastIcon;
+  readonly ChevronLeftIcon = ChevronLeftIcon;
+  readonly ChevronRightIcon = ChevronRightIcon;
 
   private isMobile = signal(false);
   private resizeListener?: () => void;
