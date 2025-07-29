@@ -10,6 +10,10 @@
   </button>
 </div>
 
+<div class="mb-5">
+  <app-category-filters (filtersChange)="onFiltersChange($event)" />
+</div>
+
 @if (categories(); as categories) {
 <div class="relative overflow-x-auto">
   <table class="w-full text-left divide-y divide-gray-200">

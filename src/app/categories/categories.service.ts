@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { environment } from '../../environments/environment.development';
 import { Observable } from 'rxjs';
 import { CategoriesPaginatedData, CategoryData, CategoryFormData } from './category.data';
+import { CategoryFiltersData } from './category-filters/category-filters';
 
 @Injectable({
   providedIn: 'root',
@@ -12,23 +13,14 @@ export class CategoriesService {
 
   private apiUrl = `${environment.apiUrl}/user/categories`;
 
-  getCategories(page: number, name?: string): Observable<CategoriesPaginatedData> {
+  getCategories(page: number, filters?: CategoryFiltersData): Observable<CategoriesPaginatedData> {
     let params = `page=${page}`;
-    if (name) {
-      params += `&name=${encodeURIComponent(name)}`;
+
+    if (filters?.name) {
+      params += `&name=${encodeURIComponent(filters.name)}`;
     }
+
     return this.httpClient.get<CategoriesPaginatedData>(`${this.apiUrl}?${params}`);
-  }
-
-  // Method for searching categories without triggering the loader
-  searchCategories(page: number, name?: string): Observable<CategoriesPaginatedData> {
-    let params = `page=${page}`;
-    if (name) {
-      params += `&name=${encodeURIComponent(name)}`;
-    }
-
-    const headers = new HttpHeaders().set('skip-loading', 'true');
-    return this.httpClient.get<CategoriesPaginatedData>(`${this.apiUrl}?${params}`, { headers });
   }
 
   createCategory(data: CategoryFormData): Observable<CategoryData> {

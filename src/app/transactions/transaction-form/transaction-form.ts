@@ -21,6 +21,7 @@ import {
 } from '@angular/forms';
 import { CategoryData } from '../../categories/category.data';
 import { CategoriesService } from '../../categories/categories.service';
+import { CategoryFiltersData } from '../../categories/category-filters/category-filters';
 import { ToastService } from '../../shared/toast/toast.service';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -137,8 +138,13 @@ export class TransactionForm {
   }
 
   private searchCategories(page: number = 1, name?: string): void {
+    const filters: CategoryFiltersData = {};
+    if (name) {
+      filters.name = name;
+    }
+
     this.categoriesService
-      .searchCategories(page, name)
+      .getCategories(page, filters)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response) => {

@@ -23,10 +23,11 @@ import {
   Trash2Icon,
 } from 'lucide-angular';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { CategoryFilters, CategoryFiltersData } from "./category-filters/category-filters";
 
 @Component({
   selector: 'app-categories',
-  imports: [CategoryForm, Pagination, Modal, LucideAngularModule],
+  imports: [CategoryForm, Pagination, Modal, LucideAngularModule, CategoryFilters],
   templateUrl: './categories.html',
   styleUrl: './categories.css',
 })
@@ -39,6 +40,7 @@ export class Categories implements OnInit {
   category = signal<CategoryData | undefined>(undefined);
   isCreationModalOpen = signal<boolean>(false);
   isConfirmationModalOpen = signal<boolean>(false);
+  currentFilters = signal<CategoryFiltersData>({});
 
   categoryFormRef = viewChild<CategoryForm>('categoryForm');
 
@@ -102,9 +104,14 @@ export class Categories implements OnInit {
     this.loadCategories(page);
   }
 
+  onFiltersChange(filters: CategoryFiltersData) {
+    this.currentFilters.set(filters);
+    this.loadCategories();
+  }
+
   private loadCategories(page: number = 1) {
     this.categoriesService
-      .getCategories(page)
+      .getCategories(page, this.currentFilters())
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response) => this.categories.set(response),
