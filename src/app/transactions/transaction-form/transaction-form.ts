@@ -19,9 +19,8 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
-import { CategoryData } from '../../categories/category.data';
+import { CategoryData, CategoryFiltersData } from '../../categories/category.data';
 import { CategoriesService } from '../../categories/categories.service';
-import { CategoryFiltersData } from '../../categories/category-filters/category-filters';
 import { ToastService } from '../../shared/toast/toast.service';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';

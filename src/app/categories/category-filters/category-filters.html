@@ -1,23 +1,42 @@
-<form [formGroup]="categoryFiltersForm" class="flex flex-col gap-y-5">
-  <div class="flex flex-col gap-1">
-    <input
-      formControlName="name"
-      type="text"
-      placeholder="Filter by name"
-      minlength="2"
-      maxlength="255"
-      class="border border-gray-300 rounded px-2.5 py-1 placeholder:text-gray-400 placeholder:text-sm"
-      [class.border-red-500]="categoryFiltersForm.get('name')?.invalid && categoryFiltersForm.get('name')?.touched"
-    />
-    @if (categoryFiltersForm.get('name')?.invalid && categoryFiltersForm.get('name')?.touched) {
+<div class="bg-gray-50 rounded">
+  <div
+    class="flex justify-between items-center cursor-pointer hover:bg-gray-100 rounded p-2"
+    (click)="showFilters()"
+  >
+    <h2 class="text-xs uppercase font-bold">Filters</h2>
+    <div class="text-gray-600 hover:text-gray-800">
+      <i-lucide
+        [img]="isFiltersDisplayed ? ChevronUpIcon : ChevronDownIcon"
+        [size]="18"
+      ></i-lucide>
+    </div>
+  </div>
+
+  @if (isFiltersDisplayed) {
+  <form [formGroup]="categoryFiltersForm" class="flex flex-col gap-y-5 p-2">
+    <div class="flex flex-col gap-1">
+      <label for="name" class="text-sm">Name</label>
+      <input
+        id="name"
+        formControlName="name"
+        type="text"
+        placeholder="Filter by name"
+        minlength="2"
+        maxlength="255"
+        class="bg-white border border-gray-300 rounded px-2.5 py-1 placeholder:text-gray-400 placeholder:text-sm"
+        [class.border-red-500]="categoryFiltersForm.get('name')?.invalid && categoryFiltersForm.get('name')?.touched"
+      />
+      @if (categoryFiltersForm.get('name')?.invalid &&
+      categoryFiltersForm.get('name')?.touched) {
       <div class="text-red-500 text-sm">
         @if (categoryFiltersForm.get('name')?.errors?.['minlength']) {
-          <span>Name must be at least 2 characters</span>
-        }
-        @if (categoryFiltersForm.get('name')?.errors?.['maxlength']) {
-          <span>Name must not exceed 255 characters</span>
+        <span>Name must be at least 2 characters</span>
+        } @if (categoryFiltersForm.get('name')?.errors?.['maxlength']) {
+        <span>Name must not exceed 255 characters</span>
         }
       </div>
-    }
-  </div>
-</form>
+      }
+    </div>
+  </form>
+  }
+</div>

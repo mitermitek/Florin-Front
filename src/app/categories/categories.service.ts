@@ -2,8 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../environments/environment.development';
 import { Observable } from 'rxjs';
-import { CategoriesPaginatedData, CategoryData, CategoryFormData } from './category.data';
-import { CategoryFiltersData } from './category-filters/category-filters';
+import { CategoriesPaginatedData, CategoryData, CategoryFiltersData, CategoryFormData } from './category.data';
 
 @Injectable({
   providedIn: 'root',

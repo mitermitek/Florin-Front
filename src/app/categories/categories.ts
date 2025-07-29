@@ -10,6 +10,7 @@ import { CategoriesService } from './categories.service';
 import {
   CategoriesPaginatedData,
   CategoryData,
+  CategoryFiltersData,
   CategoryFormData,
 } from './category.data';
 import { ToastService } from '../shared/toast/toast.service';
@@ -23,7 +24,7 @@ import {
   Trash2Icon,
 } from 'lucide-angular';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { CategoryFilters, CategoryFiltersData } from "./category-filters/category-filters";
+import { CategoryFilters } from "./category-filters/category-filters";
 
 @Component({
   selector: 'app-categories',

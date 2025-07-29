@@ -6,15 +6,13 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { ChevronDownIcon, ChevronUpIcon, LucideAngularModule } from 'lucide-angular';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
-
-export interface CategoryFiltersData {
-  name?: string;
-}
+import { CategoryFiltersData } from '../category.data';
 
 @Component({
   selector: 'app-category-filters',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, LucideAngularModule],
   templateUrl: './category-filters.html',
   styleUrl: './category-filters.css',
 })
@@ -24,11 +22,15 @@ export class CategoryFilters implements OnInit {
   filtersChange = output<CategoryFiltersData>();
 
   categoryFiltersForm = new FormGroup({
-    name: new FormControl('', [
+    name: new FormControl<string>('', [
       Validators.minLength(2),
       Validators.maxLength(255),
     ]),
   });
+  isFiltersDisplayed = false;
+
+  readonly ChevronDownIcon = ChevronDownIcon;
+  readonly ChevronUpIcon = ChevronUpIcon;
 
   ngOnInit(): void {
     this.categoryFiltersForm.valueChanges
@@ -48,5 +50,9 @@ export class CategoryFilters implements OnInit {
           this.filtersChange.emit(filters);
         }
       });
+  }
+
+  showFilters(): void {
+    this.isFiltersDisplayed = !this.isFiltersDisplayed;
   }
 }

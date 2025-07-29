@@ -17,3 +17,7 @@ export interface CategoriesPaginatedData {
   links: PaginationLinks;
   meta: PaginationMeta;
 }
+
+export interface CategoryFiltersData {
+  name?: string;
+}
