@@ -1,0 +1,46 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="flex flex-col gap-y-4">
+  <div class="flex flex-col gap-y-1">
+    <label for="email" class="text-sm">Email</label>
+    <input
+      pInputText
+      pSize="small"
+      type="email"
+      id="email"
+      placeholder="Your email"
+      autocomplete="email"
+      formControlName="email"
+      [invalid]="form.controls.email.invalid && form.controls.email.touched"
+    />
+    @if (form.controls.email.invalid && form.controls.email.touched) {
+      @if (form.controls.email.errors?.['required']) {
+        <p-message severity="error" size="small" variant="simple">Email is required.</p-message>
+      }
+      @if (form.controls.email.errors?.['email']) {
+        <p-message severity="error" size="small" variant="simple">Email must be a valid email address.</p-message>
+      }
+    }
+  </div>
+
+  <div class="flex flex-col gap-y-1">
+    <label for="password" class="text-sm">Password</label>
+    <input
+      pInputText
+      pSize="small"
+      type="password"
+      id="password"
+      placeholder="Your password"
+      autocomplete="current-password"
+      formControlName="password"
+      [invalid]="form.controls.password.invalid && form.controls.password.touched"
+    />
+    @if (form.controls.password.invalid && form.controls.password.touched) {
+      @if (form.controls.password.errors?.['required']) {
+        <p-message severity="error" size="small" variant="simple">Password is required.</p-message>
+      }
+    }
+  </div>
+
+  <button pButton size="small" type="submit">
+    <span pButtonLabel>Sign in</span>
+  </button>
+</form>

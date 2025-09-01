@@ -1,0 +1,12 @@
+<div class="card">
+  <p-panel header="Sign up">
+    <div class="max-w-sm">
+      <app-register-form (registerSubmit)="onRegisterSubmit($event)" />
+
+      <p class="mt-4 text-sm">
+        Already have an account?
+        <a routerLink="/auth/login" class="font-bold hover:underline cursor-pointer">Sign in</a>
+      </p>
+    </div>
+  </p-panel>
+</div>
