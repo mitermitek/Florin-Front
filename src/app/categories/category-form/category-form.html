@@ -1,0 +1,25 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="flex flex-col gap-y-4">
+  <div class="flex flex-col gap-y-1">
+    <label for="name" class="text-sm">Name</label>
+    <input
+      pInputText
+      pSize="small"
+      type="text"
+      id="name"
+      placeholder="Category name"
+      formControlName="name"
+      [invalid]="form.controls.name.invalid && form.controls.name.touched"
+    />
+    @if (form.controls.name.invalid && form.controls.name.touched) {
+      @if (form.controls.name.errors?.['required']) {
+        <p-message severity="error" size="small" variant="simple">Name is required.</p-message>
+      }
+      @if (form.controls.name.errors?.['minlength']) {
+        <p-message severity="error" size="small" variant="simple">Name must be at least 3 characters long.</p-message>
+      }
+      @if (form.controls.name.errors?.['maxlength']) {
+        <p-message severity="error" size="small" variant="simple">Name cannot be more than 50 characters long.</p-message>
+      }
+    }
+  </div>
+</form>
