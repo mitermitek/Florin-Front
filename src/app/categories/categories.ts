@@ -5,14 +5,30 @@ import { ButtonModule } from 'primeng/button';
 import { Dialog } from 'primeng/dialog';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { PanelModule } from 'primeng/panel';
-import { BehaviorSubject, map, Observable, switchMap, tap } from 'rxjs';
+import {
+  BehaviorSubject,
+  combineLatestWith,
+  map,
+  Observable,
+  switchMap,
+  tap
+} from 'rxjs';
 import { CategoriesService } from './categories.service';
+import { CategoryFilters } from './category-filters/category-filters';
 import { CategoryForm } from './category-form/category-form';
-import { CategoryData, CreateUpdateCategoryData } from './category.data';
+import { CategoryData, CategoryFiltersData, CreateUpdateCategoryData } from './category.data';
 
 @Component({
   selector: 'app-categories',
-  imports: [PanelModule, PaginatorModule, ButtonModule, AsyncPipe, Dialog, CategoryForm],
+  imports: [
+    PanelModule,
+    PaginatorModule,
+    ButtonModule,
+    AsyncPipe,
+    Dialog,
+    CategoryForm,
+    CategoryFilters,
+  ],
   templateUrl: './categories.html',
   styleUrl: './categories.scss',
 })
@@ -21,6 +37,7 @@ export class Categories {
   private confirmationService = inject(ConfirmationService);
   private messageService = inject(MessageService);
   private paginationState$ = new BehaviorSubject<PaginatorState>({ first: 0, rows: 10 });
+  private filtersState$ = new BehaviorSubject<CategoryFiltersData>({});
 
   first: number = 0;
   rows: number = 10;
@@ -28,7 +45,10 @@ export class Categories {
   currentPage: number = 1;
 
   categories$: Observable<CategoryData[]> = this.paginationState$.pipe(
-    switchMap((state) => this.categoriesService.getCategories(state.page, state.rows)),
+    combineLatestWith(this.filtersState$),
+    switchMap(([pagination, filters]) =>
+      this.categoriesService.getCategories(pagination.page, pagination.rows, filters)
+    ),
     tap((response) => (this.totalRecords = response.total)),
     map((response) => response.items)
   );
@@ -126,5 +146,9 @@ export class Categories {
         });
       },
     });
+  }
+
+  onFiltersChange(filters: CategoryFiltersData) {
+    this.filtersState$.next(filters);
   }
 }

@@ -9,4 +9,8 @@ export interface CreateUpdateCategoryData {
   name: string;
 }
 
+export interface CategoryFiltersData {
+  name?: string;
+}
+
 export type PaginatedCategoriesData = PaginatedData<CategoryData>;
